@@ -28,6 +28,7 @@ jobs:
           key:  my-cache
       - run:
           command: |
+            npm i
             npm run test
   
   analyze:
@@ -38,6 +39,7 @@ jobs:
           key: my-cache
       - run:
           command: |
+            npm i
             npm audit
 
 workflows:
