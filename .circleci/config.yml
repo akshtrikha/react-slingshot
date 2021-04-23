@@ -1,0 +1,52 @@
+version: 2.1
+
+executors:
+  my-executor:
+    docker:
+      - image: circleci/node:13.8.0
+
+
+jobs:
+  build:
+    executor: my-executor
+    steps:
+      - checkout
+      - run:
+          command: |
+            npm i
+            npm run lint
+      - save_cache:
+          paths:
+            - "node/modules"
+          key: my-cache
+
+  test:
+    executor: my-executor
+    steps:
+      - checkout
+      - restore_cache:
+          key:  my-cache
+      - run:
+          command: |
+            npm run test
+  
+  analyze:
+    executor: my-executor
+    steps:
+      - checkout
+      - restore_cache:
+          key: my-cache
+      - run:
+          command: |
+            npm audit
+
+workflows:
+  my-wokflow:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - analyze:
+          requires:
+            - test
